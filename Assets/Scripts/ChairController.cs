@@ -8,7 +8,7 @@ public class ChairController : MonoBehaviour
     public float rotationSpeed = 100f;
     public float maxAngle = 60f;
     public float smoothing = 5f;
-    
+
     [Header("Input Actions (References)")]
     public InputActionReference rotateForwardRef;
     public InputActionReference rotateBackwardRef;
@@ -21,16 +21,23 @@ public class ChairController : MonoBehaviour
     public XRSimpleInteractable buttonForward;
     public XRSimpleInteractable buttonBackward;
 
+    [Header("Pivot (optional)")]
+    [Tooltip("Pokud chcete rotovat židli kolem urèité pozice, pøiøaïte sem Transform. Pokud je null, použije se lokální rotace židle.")]
+    public Transform rotationPivot;
+
     private float currentAngle = 0f;
     private float targetAngle = 0f;
     private bool isForwardPressed = false;
     private bool isBackwardPressed = false;
 
+    // track last applied angle to apply incremental RotateAround when using pivot
+    private float lastAppliedAngle = 0f;
+
     void OnEnable()
     {
         if (rotateForwardRef != null && rotateForwardRef.action != null) rotateForwardRef.action.Enable();
         if (rotateBackwardRef != null && rotateBackwardRef.action != null) rotateBackwardRef.action.Enable();
-        
+
         if (rotateForwardAction.action != null) rotateForwardAction.action.Enable();
         if (rotateBackwardAction.action != null) rotateBackwardAction.action.Enable();
     }
@@ -52,6 +59,9 @@ public class ChairController : MonoBehaviour
             buttonBackward.selectEntered.AddListener(_ => isBackwardPressed = true);
             buttonBackward.selectExited.AddListener(_ => isBackwardPressed = false);
         }
+
+        // Initialize lastAppliedAngle tak, aby nebyl náhlý skok pøi prvním Update
+        lastAppliedAngle = currentAngle;
     }
 
     void Update()
@@ -59,24 +69,33 @@ public class ChairController : MonoBehaviour
         float forwardValue = GetInputValue(rotateForwardRef, rotateForwardAction) + (isForwardPressed ? 1f : 0f);
         float backwardValue = GetInputValue(rotateBackwardRef, rotateBackwardAction) + (isBackwardPressed ? 1f : 0f);
 
-        // Keyboard Fallback (W/S)
-        if (Keyboard.current != null)
-        {
-            if (Keyboard.current.wKey.isPressed) forwardValue += 1f;
-            if (Keyboard.current.sKey.isPressed) backwardValue += 1f;
-        }
-
         float move = forwardValue - backwardValue;
 
         if (Mathf.Abs(move) > 0.01f)
         {
             targetAngle += move * rotationSpeed * Time.deltaTime;
         }
-        
+
         targetAngle = Mathf.Clamp(targetAngle, -maxAngle, maxAngle);
         currentAngle = Mathf.Lerp(currentAngle, targetAngle, Time.deltaTime * smoothing);
-        
-        transform.localRotation = Quaternion.Euler(currentAngle, 0, 0);
+
+        if (rotationPivot != null)
+        {
+            // Aplikuj inkrementální rotaci kolem zvoleného pivotu (world axis = pivot.right)
+            float delta = currentAngle - lastAppliedAngle;
+            if (Mathf.Abs(delta) > 0.0001f)
+            {
+                Vector3 axis = rotationPivot.right;
+                transform.RotateAround(rotationPivot.position, axis, delta);
+            }
+            lastAppliedAngle = currentAngle;
+        }
+        else
+        {
+            // Pùvodní chování: lokální rotace židle
+            transform.localRotation = Quaternion.Euler(currentAngle, 0, 0);
+            lastAppliedAngle = currentAngle;
+        }
 
         // Debug log to console if it moves
         if (Mathf.Abs(move) > 0.01f)
@@ -92,7 +111,7 @@ public class ChairController : MonoBehaviour
         {
             val = reference.action.ReadValue<float>();
         }
-        
+
         if (val < 0.01f && property.action != null)
         {
             val = property.action.ReadValue<float>();
@@ -101,7 +120,3 @@ public class ChairController : MonoBehaviour
         return val;
     }
 }
-
-
-
-
