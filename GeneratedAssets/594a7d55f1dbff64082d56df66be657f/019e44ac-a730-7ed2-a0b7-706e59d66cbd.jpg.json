@@ -1,0 +1,28 @@
+{
+    "asset": "594a7d55f1dbff64082d56df66be657f",
+    "fileName": "019e44ac-a730-7ed2-a0b7-706e59d66cbd.jpg",
+    "prompt": "A single, realistic crumpled ball of white paper, isolated on a plain grey background, high detail, studio lighting.",
+    "negativePrompt": "",
+    "model": "flux-2-pro",
+    "modelName": "Flux 2 (Pro)",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

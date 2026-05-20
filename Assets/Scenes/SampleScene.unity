@@ -283,8 +283,8 @@ Transform:
   m_GameObject: {fileID: 293389374}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 1, z: 10}
+  m_LocalPosition: {x: -0.66, y: 0, z: -9.32}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1337,8 +1337,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChairController
   rotationSpeed: 50
-  maxAngle: 45
+  maxAngle: 0
+  minAngle: -80
   smoothing: 5
+  inputDeadzone: 0.05
   rotateForwardRef: {fileID: 0}
   rotateBackwardRef: {fileID: 0}
   rotateForwardAction:
@@ -1384,6 +1386,13 @@ MonoBehaviour:
   buttonForward: {fileID: 0}
   buttonBackward: {fileID: 0}
   rotationPivot: {fileID: 911986033}
+  allowForward: 1
+  allowBackward: 1
+  fallThresholdAngle: 80
+  recoverHoldTime: 0.5
+  autoBackwardStartAngle: 45
+  autoBackwardStrength: 1
+  enableAutoBackward: 1
 --- !u!4 &649952667
 Transform:
   m_ObjectHideFlags: 0
@@ -1510,7 +1519,7 @@ Transform:
   m_GameObject: {fileID: 911986032}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.061, z: 0}
+  m_LocalPosition: {x: 0, y: -2.46, z: -0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

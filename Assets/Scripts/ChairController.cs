@@ -45,6 +45,14 @@ public class ChairController : MonoBehaviour
     [Tooltip("Doba (s), po kterou musíte držet opaèné tlaèítko pro zvednutí židle po pádu.")]
     public float recoverHoldTime = 0.5f;
 
+    [Header("Auto-backward (self-correct) settings")]
+    [Tooltip("Úhel (v°) za kterým zaène židle sama vracet dozadu (pozitivní smìr). Pokud je 0 = disabled.")]
+    public float autoBackwardStartAngle = 45f;
+    [Tooltip("Síla (škálovaný faktor) samovolného vracení. Vìtší = rychlejší návrat.")]
+    public float autoBackwardStrength = 1f;
+    [Tooltip("Povolit automatické vracení dozadu, když je úhel vìtší než hranice.")]
+    public bool enableAutoBackward = true;
+
     private float currentAngle = 0f;
     private float targetAngle = 0f;
     private bool isForwardPressed = false;
@@ -132,6 +140,39 @@ public class ChairController : MonoBehaviour
         // use effective min/max so inspector mistakes (min>max) don't break runtime
         float effectiveMin = Mathf.Min(minAngle, maxAngle);
         float effectiveMax = Mathf.Max(minAngle, maxAngle);
+
+        // if user left minAngle at 0 but allowed backward motion, treat limits symmetrically
+        if (allowBackward && effectiveMin >= 0f)
+        {
+            effectiveMin = -effectiveMax;
+        }
+
+        // Auto-backward: when past configured start angle, apply a pulling force back
+        if (enableAutoBackward && autoBackwardStartAngle > 0f)
+        {
+            // decide if we should apply auto-backward based on current targetAngle and whether backward input is held
+            if (targetAngle > autoBackwardStartAngle)
+            {
+                // check if backward is being held (if yes, auto pull still combines with input as requested)
+                bool backwardHeld = (backwardValue > 0.01f);
+
+                // compute pull magnitude proportional to how far past the threshold we are
+                float over = targetAngle - autoBackwardStartAngle;
+                float pull = autoBackwardStrength * over;
+
+                // apply pull only when not explicitly prevented; it always adds to the net movement
+                // pull acts in negative direction (toward decreasing angle)
+                targetAngle -= pull * Time.deltaTime * (backwardHeld ? 1f : 1f);
+            }
+            else if (targetAngle < -autoBackwardStartAngle)
+            {
+                // symmetric behavior for negative side: pull toward positive (forward)
+                bool forwardHeld = (forwardValue > 0.01f);
+                float over = -autoBackwardStartAngle - targetAngle; // how far beyond negative threshold
+                float pull = autoBackwardStrength * over;
+                targetAngle += pull * Time.deltaTime * (forwardHeld ? 1f : 1f);
+            }
+        }
 
         // clamp by configured min/max angles to prevent going "pod podlahu"
         float clamped = Mathf.Clamp(targetAngle, effectiveMin, effectiveMax);
