@@ -1,0 +1,23 @@
+{
+    "asset": "8317093c06d6ebf4ea9a4419a157389f",
+    "fileName": "019e44ae-7f59-7d75-9a4c-7bcd23c63c57.glb",
+    "prompt": "A small, realistic crumpled ball of white paper, isolated, single object.",
+    "negativePrompt": "",
+    "model": "model3d-tripo-p1",
+    "modelName": "Tripo P1",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "promptImageReferenceGuid": "594a7d55f1dbff64082d56df66be657f",
+    "modelReferenceGuid": "",
+    "multiviewFrontGuid": "",
+    "multiviewBackGuid": "",
+    "multiviewLeftGuid": "",
+    "multiviewRightGuid": "",
+    "multiviewTopGuid": "",
+    "multiviewBottomGuid": "",
+    "multiviewLeftFrontGuid": "",
+    "multiviewRightFrontGuid": "",
+    "faceLimit": -1
+}
