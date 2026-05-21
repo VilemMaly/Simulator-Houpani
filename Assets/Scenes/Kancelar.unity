@@ -897,7 +897,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 435245485853517378, guid: 8317093c06d6ebf4ea9a4419a157389f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.609
+      value: 0.516
       objectReference: {fileID: 0}
     - target: {fileID: 435245485853517378, guid: 8317093c06d6ebf4ea9a4419a157389f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3068,7 +3068,7 @@ MonoBehaviour:
   m_PositionAction:
     m_UseReference: 0
     m_Action:
-      m_Name: 
+      m_Name: Position
       m_Type: 0
       m_ExpectedControlType: 
       m_Id: f8025392-7456-489d-9908-486266e0348f
@@ -3076,19 +3076,19 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings:
       - m_Name: 
-        m_Id: 
+        m_Id: eabd069e-27f6-4a55-aa97-5090187c52c2
         m_Path: <XRController>{LeftHand}/devicePosition
         m_Interactions: 
         m_Processors: 
         m_Groups: 
-        m_Action: 
+        m_Action: Position
         m_Flags: 0
       m_Flags: 0
     m_Reference: {fileID: 0}
   m_RotationAction:
     m_UseReference: 0
     m_Action:
-      m_Name: 
+      m_Name: Rotation
       m_Type: 0
       m_ExpectedControlType: 
       m_Id: 78ce691c-00fb-4f38-a8aa-d8a0192023dc
@@ -3096,12 +3096,12 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings:
       - m_Name: 
-        m_Id: 
+        m_Id: 6ac1306c-a6eb-4475-9f00-79b603260a03
         m_Path: <XRController>{LeftHand}/deviceRotation
         m_Interactions: 
         m_Processors: 
         m_Groups: 
-        m_Action: 
+        m_Action: Rotation
         m_Flags: 0
       m_Flags: 0
     m_Reference: {fileID: 0}
@@ -3132,7 +3132,7 @@ MonoBehaviour:
   m_SelectAction:
     m_UseReference: 0
     m_Action:
-      m_Name: 
+      m_Name: Select
       m_Type: 0
       m_ExpectedControlType: 
       m_Id: 2ae2100f-5609-436a-9a33-b785e5c4277c
@@ -3140,12 +3140,12 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings:
       - m_Name: 
-        m_Id: 
+        m_Id: 09e6fcff-ce1d-41ac-a72a-48cfaf1c4bf8
         m_Path: <XRController>{LeftHand}/triggerPressed
         m_Interactions: 
         m_Processors: 
         m_Groups: 
-        m_Action: 
+        m_Action: Select
         m_Flags: 0
       m_Flags: 0
     m_Reference: {fileID: 0}
