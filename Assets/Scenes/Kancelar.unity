@@ -4107,7 +4107,7 @@ Transform:
   m_GameObject: {fileID: 1147739017}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.1, z: 0}
+  m_LocalPosition: {x: 0, y: 0.05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7134,6 +7134,64 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2069580288}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2107067248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2107067249}
+  - component: {fileID: 2107067250}
+  m_Layer: 0
+  m_Name: GeneratorCisel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2107067249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107067248}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.316, y: 1.183, z: -8.148}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2107067250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107067248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f3c1749577fb444ba283e03a89b3525, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cisla
+  digitPrefabs:
+  - {fileID: 3011773023204014730, guid: f813f645d258a4f4684de28ae32a868e, type: 3}
+  - {fileID: 8500977501894147086, guid: 3f53ff4dffdb78649b050bf8a3aa3728, type: 3}
+  - {fileID: 7225221411697828077, guid: 3e1f69d1ba0c1c948854ced4725bb7e3, type: 3}
+  - {fileID: 2143949725664678056, guid: d3053427fd77f5f4f8731819530c50f2, type: 3}
+  - {fileID: 7324189267427238676, guid: 33b1e0950e2b5c04a84e8e0bc88c2faa, type: 3}
+  - {fileID: 6394246163303120547, guid: bf82d68e288bf0f47b6d5207b2d5ca21, type: 3}
+  - {fileID: 6003578193026671289, guid: b5ecf6962729ef0408ce6ff8e961c7c1, type: 3}
+  - {fileID: 6878423676474762492, guid: 5c68aa813aa891f4ea86f749f6ab1825, type: 3}
+  - {fileID: 4078293505581922869, guid: f7a514b09eba2954db6fb9b5c9f894d8, type: 3}
+  - {fileID: 1789399526815034504, guid: 136e70af54410f442b9c7bd182b49e18, type: 3}
+  spacing: 0.5
+  scale: 10
+  direction: 1
 --- !u!4 &2122867623 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: fe706183de4e2c74b86c889a07ba458d, type: 3}
@@ -7211,8 +7269,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChairSystem
   chairRigidbody: {fileID: 1270337918}
-  torqueStrength: 25
-  fallThreshold: 160
+  torqueStrength: 34
+  fallThreshold: 92
   centerOfMassTarget: {fileID: 1147739018}
   forwardAction:
     m_UseReference: 0
@@ -7270,6 +7328,12 @@ MonoBehaviour:
         m_Flags: 0
       m_Flags: 0
     m_Reference: {fileID: 0}
+  swingAngleA: 15
+  swingAngleB: 20
+  swingPoints: 10
+  cislaDisplay: {fileID: 2107067250}
+  debugAngles: 1
+  debugInterval: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -7279,3 +7343,4 @@ SceneRoots:
   - {fileID: 478040408}
   - {fileID: 1162283836}
   - {fileID: 1511846404}
+  - {fileID: 2107067249}

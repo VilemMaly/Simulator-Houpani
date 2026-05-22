@@ -10,17 +10,32 @@ public class ChairSystem : MonoBehaviour
     public Transform centerOfMassTarget;
 
     [Header("Vstupy (Oculus Quest 2)")]
-    [Tooltip("Doporučeno: XRI RightHand Interaction/PrimaryButton (A)")]
     public InputActionProperty forwardAction;
-
-    [Tooltip("Doporučeno: XRI RightHand Interaction/SecondaryButton (B)")]
     public InputActionProperty backwardAction;
 
+    [Header("Swing systém")]
+    public float swingAngleA = 10f;
+    public float swingAngleB = 25f;
+    public int swingPoints = 10;
+
+    [Header("Score display")]
+    public Cisla cislaDisplay;
+
+    [Header("DEBUG")]
+    public bool debugAngles = true;
+    public float debugInterval = 1f;
+
+    private float debugTimer;
+
+    private int score = 0;
     private bool isFalling = false;
+    private bool wasInSwingZone = false;
+
+    private Vector3 startPos;
+    private Quaternion startRot;
 
     private void OnEnable()
     {
-        // DŮLEŽITÉ: Akce se musí povolit, aby začaly posílat data
         if (forwardAction.action != null) forwardAction.action.Enable();
         if (backwardAction.action != null) backwardAction.action.Enable();
     }
@@ -33,62 +48,116 @@ public class ChairSystem : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("[ChairSystem] START");
+
         if (chairRigidbody == null)
             chairRigidbody = GetComponentInChildren<Rigidbody>();
 
-        if (centerOfMassTarget != null && chairRigidbody != null)
+        startPos = chairRigidbody.transform.position;
+        startRot = chairRigidbody.transform.rotation;
+
+        if (centerOfMassTarget != null)
         {
-            chairRigidbody.centerOfMass = chairRigidbody.transform.InverseTransformPoint(centerOfMassTarget.position);
-            Debug.Log($"[ChairSystem] Těžiště nastaveno na: {chairRigidbody.centerOfMass}");
+            chairRigidbody.centerOfMass =
+                chairRigidbody.transform.InverseTransformPoint(centerOfMassTarget.position);
         }
-        else
-        {
-            Debug.LogWarning("[ChairSystem] Chybí Rigidbody nebo CenterOfMassTarget!");
-        }
+
+        if (cislaDisplay != null)
+            cislaDisplay.Write(score);
     }
 
     void FixedUpdate()
     {
-        if (chairRigidbody == null || isFalling) return;
+        if (chairRigidbody == null) return;
 
-        // Načtení hodnot (0 = puštěno, 1 = zmáčknuto)
         float forward = forwardAction.action?.ReadValue<float>() ?? 0f;
         float backward = backwardAction.action?.ReadValue<float>() ?? 0f;
-
-        // DEBUG LOG: Odkomentujte řádek níže, pokud chcete vidět vstupy v konzoli
-        // if (forward > 0 || backward > 0) Debug.Log($"Forward: {forward}, Backward: {backward}");
 
         float moveInput = forward - backward;
 
         if (Mathf.Abs(moveInput) > 0.01f)
         {
-            // Aplikujeme sílu pro houpání
-            chairRigidbody.AddRelativeTorque(Vector3.right * moveInput * torqueStrength, ForceMode.Acceleration);
+            chairRigidbody.AddRelativeTorque(
+                Vector3.right * moveInput * torqueStrength,
+                ForceMode.Acceleration
+            );
         }
 
-        CheckForFall();
+        CheckSwing();
+        CheckFall();
+        DebugAngles();
     }
 
-    private void CheckForFall()
+    private void CheckSwing()
     {
-        // Výpočet úhlu vůči svislé ose
+        if (isFalling) return;
+
+        float angle = Vector3.Angle(chairRigidbody.transform.up, Vector3.up);
+
+        if (angle > swingAngleA && angle < swingAngleB)
+            wasInSwingZone = true;
+
+        if (wasInSwingZone && angle < swingAngleA)
+        {
+            wasInSwingZone = false;
+            RegisterSwing();
+        }
+    }
+
+    private void RegisterSwing()
+    {
+        score += swingPoints;
+
+        Debug.Log($"[SWING] +{swingPoints} SCORE = {score}");
+
+        if (cislaDisplay != null)
+            cislaDisplay.Write(score);
+    }
+
+    private void CheckFall()
+    {
         float angle = Vector3.Angle(chairRigidbody.transform.up, Vector3.up);
 
         if (angle > fallThreshold && !isFalling)
         {
-            isFalling = true;
-            Debug.LogError($"[ChairSystem] PÁD! Židle se převrátila. Úhel: {angle:F1}°");
+            Debug.LogError("[FALL] Židle spadla → RESET");
 
-            // Tady by mohl přijít haptický impulz
+            isFalling = true;
+            ResetGame();
         }
     }
 
-    public void ResetChair()
+    private void ResetGame()
     {
+        score = 0;
+        wasInSwingZone = false;
         isFalling = false;
-        chairRigidbody.transform.localRotation = Quaternion.identity;
+
         chairRigidbody.linearVelocity = Vector3.zero;
         chairRigidbody.angularVelocity = Vector3.zero;
-        Debug.Log("[ChairSystem] Židle byla resetována.");
+
+        chairRigidbody.transform.position = startPos;
+        chairRigidbody.transform.rotation = startRot;
+
+        if (cislaDisplay != null)
+            cislaDisplay.Write(score);
+
+        Debug.Log("[RESET] Game reset hotový");
+    }
+
+    private void DebugAngles()
+    {
+        if (!debugAngles) return;
+
+        debugTimer += Time.fixedDeltaTime;
+
+        if (debugTimer >= debugInterval)
+        {
+            debugTimer = 0f;
+
+            float angle = Vector3.Angle(chairRigidbody.transform.up, Vector3.up);
+
+            Debug.Log($"[DEBUG] Angle: {angle:F2} | Vel: {chairRigidbody.angularVelocity}");
+        }
     }
 }
