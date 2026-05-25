@@ -122,10 +122,46 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
-                }
-            ],
-            "bindings": [
+                },
                 {
+                    "name": "LeftPosition",
+                    "type": "Value",
+                    "id": "a1b2c3d4-e5f6-4a5b-b6c7-d8e9f0a1b2c3",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "LeftRotation",
+                    "type": "Value",
+                    "id": "b2c3d4e5-f6a7-4b6c-c7d8-e9f0a1b2c3d4",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RightPosition",
+                    "type": "Value",
+                    "id": "c3d4e5f6-a7b8-4c7d-d8e9-f0a1b2c3d4e5",
+                    "expectedControlType": "Vector3",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RightRotation",
+                    "type": "Value",
+                    "id": "d4e5f6a7-b8c9-4d8e-e9f0-a1b2c3d4e5f6",
+                    "expectedControlType": "Quaternion",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+                ],
+                "bindings": [
+{
                     "name": "",
                     "id": "978bfe49-cc26-4a3d-ab7b-7d7a29327403",
                     "path": "<Gamepad>/leftStick",
@@ -597,10 +633,54 @@
                     "action": "Rotation",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e1f2g3h4-i5j6-k7l8-m9n0-o1p2q3r4s5t6",
+                    "path": "<XRController>{LeftHand}/devicePosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "XR",
+                    "action": "LeftPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f2g3h4i5-j6k7-l8m9-n0o1-p2q3r4s5t6u7",
+                    "path": "<XRController>{LeftHand}/deviceRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "XR",
+                    "action": "LeftRotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "g3h4i5j6-k7l8-m9n0-o1p2-q3r4s5t6u7v8",
+                    "path": "<XRController>{RightHand}/devicePosition",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "XR",
+                    "action": "RightPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "h4i5j6k7-l8m9-n0o1-p2q3-r4s5t6u7v8w9",
+                    "path": "<XRController>{RightHand}/deviceRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "XR",
+                    "action": "RightRotation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
-            ]
-        },
-        {
+                ]
+                },
+{
             "name": "UI",
             "id": "272f6d14-89ba-496f-b7ff-215263d3219f",
             "actions": [
