@@ -18,8 +18,14 @@ public class ChairSystem : MonoBehaviour
     public float swingAngleB = 25f;
     public int swingPoints = 10;
 
+    [Tooltip("Jak moc roste multiplier nad swingAngleB")]
+    public float extraMultiplierScale = 0.01f;
+
     [Header("Score display")]
     public Cisla cislaDisplay;
+
+    [Header("Popup")]
+    public Popup scorePopup;
 
     [Header("DEBUG")]
     public bool debugAngles = true;
@@ -29,24 +35,38 @@ public class ChairSystem : MonoBehaviour
 
     private int score = 0;
     private bool isFalling = false;
-    private bool wasInSwingZone = false;
+
+    // Swing state
+    private bool swingStarted = false;
+
+    // maximum positive angle reached during swing
+    private float maxPositiveAngle = 0f;
+
+    // prevents spam around center
+    private bool alreadyScoredThisSwing = false;
 
     private Vector3 startPos;
     private Quaternion startRot;
 
     private void OnEnable()
     {
-        if (forwardAction.action != null) forwardAction.action.Enable();
-        if (backwardAction.action != null) backwardAction.action.Enable();
+        if (forwardAction.action != null)
+            forwardAction.action.Enable();
+
+        if (backwardAction.action != null)
+            backwardAction.action.Enable();
     }
 
     private void OnDisable()
     {
-        if (forwardAction.action != null) forwardAction.action.Disable();
-        if (backwardAction.action != null) backwardAction.action.Disable();
+        if (forwardAction.action != null)
+            forwardAction.action.Disable();
+
+        if (backwardAction.action != null)
+            backwardAction.action.Disable();
     }
 
-    void Start()
+    private void Start()
     {
         Debug.Log("[ChairSystem] START");
 
@@ -66,9 +86,10 @@ public class ChairSystem : MonoBehaviour
             cislaDisplay.Write(score);
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (chairRigidbody == null) return;
+        if (chairRigidbody == null)
+            return;
 
         float forward = forwardAction.action?.ReadValue<float>() ?? 0f;
         float backward = backwardAction.action?.ReadValue<float>() ?? 0f;
@@ -88,41 +109,115 @@ public class ChairSystem : MonoBehaviour
         DebugAngles();
     }
 
+    private float GetSignedAngle()
+    {
+        return Vector3.SignedAngle(
+            Vector3.up,
+            chairRigidbody.transform.up,
+            chairRigidbody.transform.right
+        );
+    }
+
     private void CheckSwing()
     {
-        if (isFalling) return;
+        if (isFalling)
+            return;
 
-        float angle = Vector3.Angle(chairRigidbody.transform.up, Vector3.up);
+        float angle = GetSignedAngle();
 
-        if (angle > swingAngleA && angle < swingAngleB)
-            wasInSwingZone = true;
-
-        if (wasInSwingZone && angle < swingAngleA)
+        // =========================================
+        // START SWING
+        // =========================================
+        if (!swingStarted)
         {
-            wasInSwingZone = false;
-            RegisterSwing();
+            // start only when entering positive side
+            if (angle > swingAngleA)
+            {
+                swingStarted = true;
+
+                maxPositiveAngle = angle;
+
+                alreadyScoredThisSwing = false;
+            }
+
+            return;
+        }
+
+        // =========================================
+        // TRACK ONLY POSITIVE MAXIMUM
+        // =========================================
+        if (angle > maxPositiveAngle)
+        {
+            maxPositiveAngle = angle;
+        }
+
+        // =========================================
+        // SWING FINISHED
+        // =========================================
+        // once chair returns back below A
+        if (angle < swingAngleA)
+        {
+            if (!alreadyScoredThisSwing)
+            {
+                if (maxPositiveAngle >= swingAngleB)
+                {
+                    RegisterSwing(maxPositiveAngle);
+                }
+
+                alreadyScoredThisSwing = true;
+            }
+
+            swingStarted = false;
+            maxPositiveAngle = 0f;
         }
     }
 
-    private void RegisterSwing()
+    private void RegisterSwing(float maxAngle)
     {
-        score += swingPoints;
+        float multiplier = 1f;
 
-        Debug.Log($"[SWING] +{swingPoints} SCORE = {score}");
+        // BONUS ONLY FROM POSITIVE ANGLE
+        if (maxAngle > swingAngleB)
+        {
+            float extra = maxAngle - swingAngleB;
+
+            multiplier += extra * extra * extraMultiplierScale;
+        }
+
+        int awarded = Mathf.RoundToInt(
+            swingPoints * multiplier
+        );
+
+        score += awarded;
+
+        Debug.Log(
+            $"[SWING] positiveMax={maxAngle:F2} " +
+            $"multiplier={multiplier:F2} " +
+            $"awarded={awarded} " +
+            $"total={score}"
+        );
 
         if (cislaDisplay != null)
+        {
             cislaDisplay.Write(score);
+        }
+
+        if (scorePopup != null)
+        {
+            scorePopup.Show(awarded);
+        }
     }
 
     private void CheckFall()
     {
-        float angle = Vector3.Angle(chairRigidbody.transform.up, Vector3.up);
+        float angle = Mathf.Abs(GetSignedAngle());
 
         if (angle > fallThreshold && !isFalling)
         {
             Debug.LogError("[FALL] Židle spadla → RESET");
 
             isFalling = true;
+
             ResetGame();
         }
     }
@@ -130,8 +225,11 @@ public class ChairSystem : MonoBehaviour
     private void ResetGame()
     {
         score = 0;
-        wasInSwingZone = false;
-        isFalling = false;
+
+        swingStarted = false;
+        alreadyScoredThisSwing = false;
+
+        maxPositiveAngle = 0f;
 
         chairRigidbody.linearVelocity = Vector3.zero;
         chairRigidbody.angularVelocity = Vector3.zero;
@@ -140,14 +238,19 @@ public class ChairSystem : MonoBehaviour
         chairRigidbody.transform.rotation = startRot;
 
         if (cislaDisplay != null)
+        {
             cislaDisplay.Write(score);
+        }
+
+        isFalling = false;
 
         Debug.Log("[RESET] Game reset hotový");
     }
 
     private void DebugAngles()
     {
-        if (!debugAngles) return;
+        if (!debugAngles)
+            return;
 
         debugTimer += Time.fixedDeltaTime;
 
@@ -155,9 +258,13 @@ public class ChairSystem : MonoBehaviour
         {
             debugTimer = 0f;
 
-            float angle = Vector3.Angle(chairRigidbody.transform.up, Vector3.up);
+            float angle = GetSignedAngle();
 
-            Debug.Log($"[DEBUG] Angle: {angle:F2} | Vel: {chairRigidbody.angularVelocity}");
+            Debug.Log(
+                $"[DEBUG] SignedAngle={angle:F2} | " +
+                $"PositiveMax={maxPositiveAngle:F2} | " +
+                $"AngularVel={chairRigidbody.angularVelocity}"
+            );
         }
     }
 }

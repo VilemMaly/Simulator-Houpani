@@ -13,7 +13,7 @@ public class Cisla : MonoBehaviour
     private void Start()
     {
         // Testovací zápis čísla
-        Write(12345);
+        Write(0);
     }
     public enum Direction
     {
