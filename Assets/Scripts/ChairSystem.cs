@@ -10,85 +10,261 @@ public class ChairSystem : MonoBehaviour
     public Transform centerOfMassTarget;
 
     [Header("Vstupy (Oculus Quest 2)")]
-    [Tooltip("Doporučeno: XRI RightHand Interaction/PrimaryButton (A)")]
     public InputActionProperty forwardAction;
-
-    [Tooltip("Doporučeno: XRI RightHand Interaction/SecondaryButton (B)")]
     public InputActionProperty backwardAction;
 
+    [Header("Swing systém")]
+    public float swingAngleA = 10f;
+    public float swingAngleB = 25f;
+    public int swingPoints = 10;
+
+    [Tooltip("Jak moc roste multiplier nad swingAngleB")]
+    public float extraMultiplierScale = 0.01f;
+
+    [Header("Score display")]
+    public Cisla cislaDisplay;
+
+    [Header("Popup")]
+    public Popup scorePopup;
+
+    [Header("DEBUG")]
+    public bool debugAngles = true;
+    public float debugInterval = 1f;
+
+    private float debugTimer;
+
+    private int score = 0;
     private bool isFalling = false;
+
+    // Swing state
+    private bool swingStarted = false;
+
+    // maximum positive angle reached during swing
+    private float maxPositiveAngle = 0f;
+
+    // prevents spam around center
+    private bool alreadyScoredThisSwing = false;
+
+    private Vector3 startPos;
+    private Quaternion startRot;
 
     private void OnEnable()
     {
-        // DŮLEŽITÉ: Akce se musí povolit, aby začaly posílat data
-        if (forwardAction.action != null) forwardAction.action.Enable();
-        if (backwardAction.action != null) backwardAction.action.Enable();
+        if (forwardAction.action != null)
+            forwardAction.action.Enable();
+
+        if (backwardAction.action != null)
+            backwardAction.action.Enable();
     }
 
     private void OnDisable()
     {
-        if (forwardAction.action != null) forwardAction.action.Disable();
-        if (backwardAction.action != null) backwardAction.action.Disable();
+        if (forwardAction.action != null)
+            forwardAction.action.Disable();
+
+        if (backwardAction.action != null)
+            backwardAction.action.Disable();
     }
 
-    void Start()
+    private void Start()
     {
+        Debug.Log("[ChairSystem] START");
+
         if (chairRigidbody == null)
             chairRigidbody = GetComponentInChildren<Rigidbody>();
 
-        if (centerOfMassTarget != null && chairRigidbody != null)
+        startPos = chairRigidbody.transform.position;
+        startRot = chairRigidbody.transform.rotation;
+
+        if (centerOfMassTarget != null)
         {
-            chairRigidbody.centerOfMass = chairRigidbody.transform.InverseTransformPoint(centerOfMassTarget.position);
-            Debug.Log($"[ChairSystem] Těžiště nastaveno na: {chairRigidbody.centerOfMass}");
+            chairRigidbody.centerOfMass =
+                chairRigidbody.transform.InverseTransformPoint(centerOfMassTarget.position);
         }
-        else
-        {
-            Debug.LogWarning("[ChairSystem] Chybí Rigidbody nebo CenterOfMassTarget!");
-        }
+
+        if (cislaDisplay != null)
+            cislaDisplay.Write(score);
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (chairRigidbody == null || isFalling) return;
+        if (chairRigidbody == null)
+            return;
 
-        // Načtení hodnot (0 = puštěno, 1 = zmáčknuto)
         float forward = forwardAction.action?.ReadValue<float>() ?? 0f;
         float backward = backwardAction.action?.ReadValue<float>() ?? 0f;
-
-        // DEBUG LOG: Odkomentujte řádek níže, pokud chcete vidět vstupy v konzoli
-        // if (forward > 0 || backward > 0) Debug.Log($"Forward: {forward}, Backward: {backward}");
 
         float moveInput = forward - backward;
 
         if (Mathf.Abs(moveInput) > 0.01f)
         {
-            // Aplikujeme sílu pro houpání
-            chairRigidbody.AddRelativeTorque(Vector3.right * moveInput * torqueStrength, ForceMode.Acceleration);
+            chairRigidbody.AddRelativeTorque(
+                Vector3.right * moveInput * torqueStrength,
+                ForceMode.Acceleration
+            );
         }
 
-        CheckForFall();
+        CheckSwing();
+        CheckFall();
+        DebugAngles();
     }
 
-    private void CheckForFall()
+    private float GetSignedAngle()
     {
-        // Výpočet úhlu vůči svislé ose
-        float angle = Vector3.Angle(chairRigidbody.transform.up, Vector3.up);
+        return Vector3.SignedAngle(
+            Vector3.up,
+            chairRigidbody.transform.up,
+            chairRigidbody.transform.right
+        );
+    }
+
+    private void CheckSwing()
+    {
+        if (isFalling)
+            return;
+
+        float angle = GetSignedAngle();
+
+        // =========================================
+        // START SWING
+        // =========================================
+        if (!swingStarted)
+        {
+            // start only when entering positive side
+            if (angle > swingAngleA)
+            {
+                swingStarted = true;
+
+                maxPositiveAngle = angle;
+
+                alreadyScoredThisSwing = false;
+            }
+
+            return;
+        }
+
+        // =========================================
+        // TRACK ONLY POSITIVE MAXIMUM
+        // =========================================
+        if (angle > maxPositiveAngle)
+        {
+            maxPositiveAngle = angle;
+        }
+
+        // =========================================
+        // SWING FINISHED
+        // =========================================
+        // once chair returns back below A
+        if (angle < swingAngleA)
+        {
+            if (!alreadyScoredThisSwing)
+            {
+                if (maxPositiveAngle >= swingAngleB)
+                {
+                    RegisterSwing(maxPositiveAngle);
+                }
+
+                alreadyScoredThisSwing = true;
+            }
+
+            swingStarted = false;
+            maxPositiveAngle = 0f;
+        }
+    }
+
+    private void RegisterSwing(float maxAngle)
+    {
+        float multiplier = 1f;
+
+        // BONUS ONLY FROM POSITIVE ANGLE
+        if (maxAngle > swingAngleB)
+        {
+            float extra = maxAngle - swingAngleB;
+
+            multiplier += extra * extra * extraMultiplierScale;
+        }
+
+        int awarded = Mathf.RoundToInt(
+            swingPoints * multiplier
+        );
+
+        score += awarded;
+
+        Debug.Log(
+            $"[SWING] positiveMax={maxAngle:F2} " +
+            $"multiplier={multiplier:F2} " +
+            $"awarded={awarded} " +
+            $"total={score}"
+        );
+
+        if (cislaDisplay != null)
+        {
+            cislaDisplay.Write(score);
+        }
+
+        if (scorePopup != null)
+        {
+            scorePopup.Show(awarded);
+        }
+    }
+
+    private void CheckFall()
+    {
+        float angle = Mathf.Abs(GetSignedAngle());
 
         if (angle > fallThreshold && !isFalling)
         {
-            isFalling = true;
-            Debug.LogError($"[ChairSystem] PÁD! Židle se převrátila. Úhel: {angle:F1}°");
+            Debug.LogError("[FALL] Židle spadla → RESET");
 
-            // Tady by mohl přijít haptický impulz
+            isFalling = true;
+
+            ResetGame();
         }
     }
 
-    public void ResetChair()
+    private void ResetGame()
     {
-        isFalling = false;
-        chairRigidbody.transform.localRotation = Quaternion.identity;
+        score = 0;
+
+        swingStarted = false;
+        alreadyScoredThisSwing = false;
+
+        maxPositiveAngle = 0f;
+
         chairRigidbody.linearVelocity = Vector3.zero;
         chairRigidbody.angularVelocity = Vector3.zero;
-        Debug.Log("[ChairSystem] Židle byla resetována.");
+
+        chairRigidbody.transform.position = startPos;
+        chairRigidbody.transform.rotation = startRot;
+
+        if (cislaDisplay != null)
+        {
+            cislaDisplay.Write(score);
+        }
+
+        isFalling = false;
+
+        Debug.Log("[RESET] Game reset hotový");
+    }
+
+    private void DebugAngles()
+    {
+        if (!debugAngles)
+            return;
+
+        debugTimer += Time.fixedDeltaTime;
+
+        if (debugTimer >= debugInterval)
+        {
+            debugTimer = 0f;
+
+            float angle = GetSignedAngle();
+
+            Debug.Log(
+                $"[DEBUG] SignedAngle={angle:F2} | " +
+                $"PositiveMax={maxPositiveAngle:F2} | " +
+                $"AngularVel={chairRigidbody.angularVelocity}"
+            );
+        }
     }
 }
