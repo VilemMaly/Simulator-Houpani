@@ -6,154 +6,185 @@ public class VRChairController : MonoBehaviour
     [Header("References")]
     public Rigidbody rb;
 
-    [Space]
+    [Header("Center Of Mass")]
+    public Transform centerOfMass;
 
+    [Header("Player")]
+    public Transform playerTransform;
+
+    [Header("Hands")]
     public SphereCollider leftHandCollider;
     public SphereCollider rightHandCollider;
 
-    [Space]
+    public string touchTag = "touch";
 
-    public Transform centerOfMass;
+    [Header("Hand Movement")]
+    public float handForceMultiplier = 8f;
+    public float maxHandForce = 20f;
 
-    [Space]
-
+    [Header("Thrusters")]
     public Transform leftThruster;
     public Transform rightThruster;
 
-    [Header("Hand Push Movement")]
-    public float handVelocityMultiplier = 1.5f;
-    public string touchTag = "touch";
+    public float thrusterForce = 150f;
 
-    [Header("Thrusters")]
-    public InputActionProperty leftThrusterAction;
-    public InputActionProperty rightThrusterAction;
+    [Header("Input Actions Asset")]
+    public InputActionReference leftThrusterAction;
+    public InputActionReference rightThrusterAction;
 
-    public float thrusterForce = 40f;
+    [Header("Limits")]
+    public float maxVelocity = 20f;
 
-    [Header("Physics")]
-    public float maxVelocity = 15f;
-    public float angularDragWhileGrounded = 2f;
-    public float dragWhileGrounded = 0.2f;
+    [Header("Debug")]
+    public bool debugLogs = true;
 
-    private Vector3 previousLeftHandPos;
-    private Vector3 previousRightHandPos;
-
-    private Vector3 leftHandVelocity;
-    private Vector3 rightHandVelocity;
+    private Vector3 previousLeftLocalPos;
+    private Vector3 previousRightLocalPos;
 
     private bool leftTouching;
     private bool rightTouching;
 
-    private void Start()
+    private Vector3 leftNormal;
+    private Vector3 rightNormal;
+
+    private void Awake()
     {
         if (rb == null)
             rb = GetComponent<Rigidbody>();
+    }
+
+    private void OnEnable()
+    {
+        leftThrusterAction?.action.Enable();
+        rightThrusterAction?.action.Enable();
+    }
+
+    private void OnDisable()
+    {
+        leftThrusterAction?.action.Disable();
+        rightThrusterAction?.action.Disable();
+    }
+
+    private void Start()
+    {
+        rb.maxAngularVelocity = 50f;
 
         if (centerOfMass != null)
-            rb.centerOfMass = transform.InverseTransformPoint(centerOfMass.position);
+        {
+            rb.centerOfMass =
+                transform.InverseTransformPoint(centerOfMass.position);
+        }
 
-        previousLeftHandPos = leftHandCollider.transform.position;
-        previousRightHandPos = rightHandCollider.transform.position;
+        previousLeftLocalPos =
+            transform.InverseTransformPoint(leftHandCollider.transform.position);
 
-        rb.maxAngularVelocity = 50f;
+        previousRightLocalPos =
+            transform.InverseTransformPoint(rightHandCollider.transform.position);
     }
 
     private void FixedUpdate()
     {
-        UpdateHandVelocities();
-
-        ApplyHandMovement();
-
-        ApplyThrusters();
-
+        HandleHandMovement();
+        HandleThrusters();
         LimitVelocity();
-
-        rb.linearDamping = dragWhileGrounded;
-        rb.angularDamping = angularDragWhileGrounded;
     }
 
-    private void UpdateHandVelocities()
+    private void HandleHandMovement()
     {
-        leftHandVelocity =
-            (leftHandCollider.transform.position - previousLeftHandPos)
-            / Time.fixedDeltaTime;
+        Vector3 currentLeftLocalPos =
+            transform.InverseTransformPoint(leftHandCollider.transform.position);
 
-        rightHandVelocity =
-            (rightHandCollider.transform.position - previousRightHandPos)
-            / Time.fixedDeltaTime;
+        Vector3 currentRightLocalPos =
+            transform.InverseTransformPoint(rightHandCollider.transform.position);
 
-        previousLeftHandPos = leftHandCollider.transform.position;
-        previousRightHandPos = rightHandCollider.transform.position;
+        Vector3 leftLocalVelocity =
+            (currentLeftLocalPos - previousLeftLocalPos) / Time.fixedDeltaTime;
+
+        Vector3 rightLocalVelocity =
+            (currentRightLocalPos - previousRightLocalPos) / Time.fixedDeltaTime;
+
+        previousLeftLocalPos = currentLeftLocalPos;
+        previousRightLocalPos = currentRightLocalPos;
+
+        Vector3 leftWorldVelocity =
+            transform.TransformDirection(leftLocalVelocity);
+
+        Vector3 rightWorldVelocity =
+            transform.TransformDirection(rightLocalVelocity);
+
+        ApplyHand(leftTouching, leftWorldVelocity, leftNormal);
+        ApplyHand(rightTouching, rightWorldVelocity, rightNormal);
     }
 
-    private void ApplyHandMovement()
+    private void ApplyHand(bool touching, Vector3 velocity, Vector3 normal)
     {
-        if (leftTouching)
-        {
-            Vector3 force =
-                leftHandVelocity * handVelocityMultiplier;
+        if (!touching) return;
 
-            rb.AddForce(force, ForceMode.Acceleration);
-        }
+        if (playerTransform == null) return;
 
-        if (rightTouching)
-        {
-            Vector3 force =
-                rightHandVelocity * handVelocityMultiplier;
+        Vector3 toPlayer =
+            (playerTransform.position - transform.position).normalized;
 
-            rb.AddForce(force, ForceMode.Acceleration);
-        }
-    }
+        float dot = Vector3.Dot(normal, toPlayer);
 
-    private void ApplyThrusters()
-    {
-        bool leftActive =
-            leftThrusterAction.action != null &&
-            leftThrusterAction.action.IsPressed();
-
-        bool rightActive =
-            rightThrusterAction.action != null &&
-            rightThrusterAction.action.IsPressed();
-
-        if (leftActive)
-        {
-            ApplyThrusterForce(leftThruster);
-        }
-
-        if (rightActive)
-        {
-            ApplyThrusterForce(rightThruster);
-        }
-    }
-
-    private void ApplyThrusterForce(Transform thruster)
-    {
-        if (thruster == null)
+        if (dot <= 0f)
             return;
 
-        rb.AddForceAtPosition(
-            thruster.forward * thrusterForce,
-            thruster.position,
-            ForceMode.Force
-        );
+        Vector3 projected =
+            Vector3.Project(velocity, normal);
+
+        Vector3 force =
+            -projected * handForceMultiplier;
+
+        force = Vector3.ClampMagnitude(force, maxHandForce);
+
+        rb.AddForce(force, ForceMode.Acceleration);
+    }
+
+    private void HandleThrusters()
+    {
+        if (leftThrusterAction?.action.IsPressed() == true)
+            ApplyThruster(leftThruster, "LEFT");
+
+        if (rightThrusterAction?.action.IsPressed() == true)
+            ApplyThruster(rightThruster, "RIGHT");
+    }
+
+    private void ApplyThruster(Transform thruster, string name)
+    {
+        if (thruster == null) return;
+
+        Vector3 force = thruster.forward * thrusterForce;
+
+        rb.AddForceAtPosition(force, thruster.position, ForceMode.Force);
     }
 
     private void LimitVelocity()
     {
         if (rb.linearVelocity.magnitude > maxVelocity)
         {
-            rb.linearVelocity =
-                rb.linearVelocity.normalized * maxVelocity;
+            rb.linearVelocity = rb.linearVelocity.normalized * maxVelocity;
         }
     }
 
-    public void SetLeftTouching(bool touching)
+    public void SetLeftTouching(bool value)
     {
-        leftTouching = touching;
+        leftTouching = value;
     }
 
-    public void SetRightTouching(bool touching)
+    public void SetRightTouching(bool value)
     {
-        rightTouching = touching;
+        rightTouching = value;
+    }
+
+    // NOVÉ: nastavování normály z trigger skriptu
+    public void SetLeftNormal(Vector3 normal)
+    {
+        leftNormal = normal.normalized;
+    }
+
+    public void SetRightNormal(Vector3 normal)
+    {
+        rightNormal = normal.normalized;
     }
 }

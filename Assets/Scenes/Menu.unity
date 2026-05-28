@@ -1861,16 +1861,28 @@ PrefabInstance:
     m_TransformParent: {fileID: 275595533}
     m_Modifications:
     - target: {fileID: 1178392926882621479, guid: 5bf96dd3e2a992944a2bf81547be54b5, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 1178392926882621479, guid: 5bf96dd3e2a992944a2bf81547be54b5, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 1178392926882621479, guid: 5bf96dd3e2a992944a2bf81547be54b5, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 1178392926882621479, guid: 5bf96dd3e2a992944a2bf81547be54b5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.10751
+      value: 3.233
       objectReference: {fileID: 0}
     - target: {fileID: 1178392926882621479, guid: 5bf96dd3e2a992944a2bf81547be54b5, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.4610598
+      value: 2.765
       objectReference: {fileID: 0}
     - target: {fileID: 1178392926882621479, guid: 5bf96dd3e2a992944a2bf81547be54b5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.9497601
+      value: 0.911
       objectReference: {fileID: 0}
     - target: {fileID: 1178392926882621479, guid: 5bf96dd3e2a992944a2bf81547be54b5, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2004,34 +2016,10 @@ MonoBehaviour:
       m_Calls: []
   m_HoverEntered:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2100000, guid: e3e60e2892e020640a7ff1aa48033102, type: 2}
-        m_TargetAssemblyTypeName: UnityEngine.Material, UnityEngine
-        m_MethodName: CopyPropertiesFromMaterial
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 2100000, guid: e3e60e2892e020640a7ff1aa48033102, type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Material, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_HoverExited:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2100000, guid: c4c4482524a5ed0449877f4dabde9dd4, type: 2}
-        m_TargetAssemblyTypeName: UnityEngine.Material, UnityEngine
-        m_MethodName: CopyPropertiesFromMaterial
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 2100000, guid: c4c4482524a5ed0449877f4dabde9dd4, type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Material, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_FirstSelectEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -2193,6 +2181,10 @@ PrefabInstance:
     - target: {fileID: 8135023674665499069, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_Name
       value: XR Interaction Simulator
+      objectReference: {fileID: 0}
+    - target: {fileID: 8135023674665499069, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8518324294302271954, guid: 58d0a4ac86f2348deb02f3880c71378e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2677,8 +2669,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.29999998, y: 0.29999998, z: 0.29999998}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1915411089}
   m_Father: {fileID: 801015464}
@@ -3118,16 +3110,28 @@ PrefabInstance:
       value: office_chair
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: 0d15465056161c547beeda02a20ec4ba, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 2774220344278030320, guid: 0d15465056161c547beeda02a20ec4ba, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 2774220344278030320, guid: 0d15465056161c547beeda02a20ec4ba, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 2774220344278030320, guid: 0d15465056161c547beeda02a20ec4ba, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.58751
+      value: 3.634
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: 0d15465056161c547beeda02a20ec4ba, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.5910599
+      value: 2.563
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: 0d15465056161c547beeda02a20ec4ba, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.73976
+      value: 0.956
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: 0d15465056161c547beeda02a20ec4ba, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3156,6 +3160,10 @@ PrefabInstance:
     - target: {fileID: 2774220344278030320, guid: 0d15465056161c547beeda02a20ec4ba, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -170.384
+      objectReference: {fileID: 0}
+    - target: {fileID: 2774220344278030320, guid: 0d15465056161c547beeda02a20ec4ba, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3259,34 +3267,10 @@ MonoBehaviour:
       m_Calls: []
   m_HoverEntered:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2100000, guid: e3e60e2892e020640a7ff1aa48033102, type: 2}
-        m_TargetAssemblyTypeName: UnityEngine.Material, UnityEngine
-        m_MethodName: CopyPropertiesFromMaterial
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 2100000, guid: e3e60e2892e020640a7ff1aa48033102, type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Material, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_HoverExited:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2100000, guid: c4c4482524a5ed0449877f4dabde9dd4, type: 2}
-        m_TargetAssemblyTypeName: UnityEngine.Material, UnityEngine
-        m_MethodName: CopyPropertiesFromMaterial
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 2100000, guid: c4c4482524a5ed0449877f4dabde9dd4, type: 2}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Material, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_FirstSelectEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -3296,13 +3280,13 @@ MonoBehaviour:
   m_SelectEntered:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 967991199}
+      - m_Target: {fileID: 1601091309}
         m_TargetAssemblyTypeName: SceneTransitionOnGrab, Assembly-CSharp
-        m_MethodName: OnSelectEntered
-        m_Mode: 0
+        m_MethodName: LoadTargetScene
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -3858,7 +3842,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 644280333400664692, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    m_Reference: {fileID: 313106648444239516, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_RotationAction:
     m_UseReference: 1
     m_Action:
@@ -3870,9 +3854,9 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 7189787257222546395, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    m_Reference: {fileID: 669470306406730584, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_IsTrackedAction:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Is Tracked
       m_Type: 1
@@ -3882,7 +3866,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 1
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -680976787041900766, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_TrackingStateAction:
     m_UseReference: 0
     m_Action:
@@ -3906,7 +3890,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 6148605297834600937, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    m_Reference: {fileID: 8969275060972801852, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_SelectActionValue:
     m_UseReference: 0
     m_Action:
@@ -3916,15 +3900,7 @@ MonoBehaviour:
       m_Id: e31b4539-b9d2-4e74-802f-de4fe085e5a0
       m_Processors: 
       m_Interactions: 
-      m_SingletonActionBindings:
-      - m_Name: 
-        m_Id: 71721d0f-3614-4836-a422-3743e224f537
-        m_Path: <OculusTouchController>/gripPressed
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Select Value
-        m_Flags: 0
+      m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
   m_ActivateAction:
@@ -3938,7 +3914,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 3768051090419835250, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    m_Reference: {fileID: 8969275060972801852, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_ActivateActionValue:
     m_UseReference: 0
     m_Action:
@@ -3948,15 +3924,7 @@ MonoBehaviour:
       m_Id: f44e3a2a-d611-407d-ac3b-9a479e116b13
       m_Processors: 
       m_Interactions: 
-      m_SingletonActionBindings:
-      - m_Name: 
-        m_Id: dfc961df-1304-4ac6-be84-c776163202f7
-        m_Path: <OculusTouchController>/primaryButton
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Activate Value
-        m_Flags: 0
+      m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
   m_UIPressAction:
@@ -4884,7 +4852,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 644280333400664692, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    m_Reference: {fileID: -5205563015795096859, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_RotationAction:
     m_UseReference: 1
     m_Action:
@@ -4896,9 +4864,9 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 7189787257222546395, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    m_Reference: {fileID: 5635898444927042100, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_IsTrackedAction:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Is Tracked
       m_Type: 1
@@ -4908,7 +4876,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 1
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -6693796564763650307, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_TrackingStateAction:
     m_UseReference: 0
     m_Action:
@@ -4932,7 +4900,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 6148605297834600937, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    m_Reference: {fileID: -9073685109177894686, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_SelectActionValue:
     m_UseReference: 0
     m_Action:
@@ -4956,7 +4924,7 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings: []
       m_Flags: 0
-    m_Reference: {fileID: 3768051090419835250, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    m_Reference: {fileID: -9073685109177894686, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_ActivateActionValue:
     m_UseReference: 0
     m_Action:
@@ -5347,9 +5315,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.XR.TrackedPoseDriver
   m_TrackingType: 0
   m_UpdateType: 0
-  m_IgnoreTrackingState: 0
+  m_IgnoreTrackingState: 1
   m_PositionInput:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Position
       m_Type: 0
@@ -5359,25 +5327,17 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings:
       - m_Name: 
-        m_Id: bfd0af9d-a263-4230-b616-460168b19538
-        m_Path: <XRHMD>/centerEyePosition
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Position
-        m_Flags: 0
-      - m_Name: 
         m_Id: 68517908-2e2e-4a2c-85d8-67ddd5aeb2c6
-        m_Path: <HandheldARInputDevice>/devicePosition
+        m_Path: <XRHMD>/devicePosition
         m_Interactions: 
         m_Processors: 
         m_Groups: 
         m_Action: Position
         m_Flags: 0
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: -5491394689873840942, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_RotationInput:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Rotation
       m_Type: 0
@@ -5387,25 +5347,17 @@ MonoBehaviour:
       m_Interactions: 
       m_SingletonActionBindings:
       - m_Name: 
-        m_Id: feaafb9c-dfee-43ed-b7a8-635b4d85e6ff
-        m_Path: <XRHMD>/centerEyeRotation
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Rotation
-        m_Flags: 0
-      - m_Name: 
         m_Id: 56487280-2201-4f44-a340-d80985dd5b4b
-        m_Path: <HandheldARInputDevice>/deviceRotation
+        m_Path: <XRHMD>/deviceRotation
         m_Interactions: 
         m_Processors: 
         m_Groups: 
         m_Action: Rotation
         m_Flags: 0
       m_Flags: 0
-    m_Reference: {fileID: 0}
+    m_Reference: {fileID: 7134589465565499845, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_TrackingStateInput:
-    m_UseReference: 0
+    m_UseReference: 1
     m_Action:
       m_Name: Tracking State
       m_Type: 0
@@ -5413,15 +5365,7 @@ MonoBehaviour:
       m_Id: ac385c11-155f-459c-90b5-953f1155ba0f
       m_Processors: 
       m_Interactions: 
-      m_SingletonActionBindings:
-      - m_Name: 
-        m_Id: 6f7d9a3a-ea20-45f4-9c7e-0cc421db75ce
-        m_Path: <XRHMD>/trackingState
-        m_Interactions: 
-        m_Processors: 
-        m_Groups: 
-        m_Action: Tracking State
-        m_Flags: 0
+      m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
   m_PositionAction:

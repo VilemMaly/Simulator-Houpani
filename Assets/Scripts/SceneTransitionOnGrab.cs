@@ -5,12 +5,13 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class SceneTransitionOnGrab : MonoBehaviour
 {
-    [SerializeField] private string sceneName = "Kancelar";
+    [SerializeField] private string sceneName = "";
 
     public void LoadTargetScene()
     {
         if (!string.IsNullOrEmpty(sceneName))
         {
+            Debug.Log("Loading" + sceneName);
             SceneManager.LoadScene(sceneName);
         }
         else
