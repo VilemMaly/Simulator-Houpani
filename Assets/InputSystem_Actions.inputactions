@@ -1717,30 +1717,8 @@
                 },
                 {
                     "name": "",
-                    "id": "ebc0393d-a073-4813-9a49-02ecf7982d99",
-                    "path": "<Keyboard>/#(Q)",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "LevyGrip",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "772ba06c-d6c5-400a-807e-182b2be0f3f1",
                     "path": "<XRController>{RightHand}/{GripButton}",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "PravyGrip",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "13814b9c-7b22-4471-b354-339ef4622394",
-                    "path": "<Keyboard>/#(E)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

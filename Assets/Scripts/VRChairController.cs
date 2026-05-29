@@ -1,16 +1,20 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
-public class VRChairController : MonoBehaviour
+public class VRChairController : NetworkBehaviour
 {
     [Header("References")]
     public Rigidbody rb;
 
+    [Header("Camera (LOCAL ONLY)")]
+    public GameObject playerCameraRoot;
+
+    [Header("Disable For Non Owner")]
+    public GameObject nonOwnerColliderParent;
+
     [Header("Center Of Mass")]
     public Transform centerOfMass;
-
-    [Header("Player")]
-    public Transform playerTransform;
 
     [Header("Hands")]
     public SphereCollider leftHandCollider;
@@ -47,33 +51,43 @@ public class VRChairController : MonoBehaviour
     private Vector3 leftNormal;
     private Vector3 rightNormal;
 
-    private void Awake()
+    private bool IsNetworkActive()
     {
-        if (rb == null)
-            rb = GetComponent<Rigidbody>();
+        return NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening;
     }
 
-    private void OnEnable()
+    private bool IsLocalMode => !IsNetworkActive();
+
+    private bool IsLocalPlayer()
     {
-        leftThrusterAction?.action.Enable();
-        rightThrusterAction?.action.Enable();
+        // offline → vždy true
+        if (IsLocalMode) return true;
+
+        // online → jen owner
+        return IsOwner;
     }
 
-    private void OnDisable()
+    public override void OnNetworkSpawn()
     {
-        leftThrusterAction?.action.Disable();
-        rightThrusterAction?.action.Disable();
-    }
+        base.OnNetworkSpawn();
 
-    private void Start()
-    {
+        if (!IsLocalPlayer())
+        {
+            if (playerCameraRoot != null)
+                playerCameraRoot.SetActive(false);
+
+            // odstraní collider parent jen pro non-owner instance
+            if (nonOwnerColliderParent != null)
+                Destroy(nonOwnerColliderParent);
+
+            enabled = false;
+            return;
+        }
+
         rb.maxAngularVelocity = 50f;
 
         if (centerOfMass != null)
-        {
-            rb.centerOfMass =
-                transform.InverseTransformPoint(centerOfMass.position);
-        }
+            rb.centerOfMass = transform.InverseTransformPoint(centerOfMass.position);
 
         previousLeftLocalPos =
             transform.InverseTransformPoint(leftHandCollider.transform.position);
@@ -82,8 +96,27 @@ public class VRChairController : MonoBehaviour
             transform.InverseTransformPoint(rightHandCollider.transform.position);
     }
 
+    private void OnEnable()
+    {
+        if (!IsLocalPlayer()) return;
+
+        leftThrusterAction?.action.Enable();
+        rightThrusterAction?.action.Enable();
+    }
+
+    private void OnDisable()
+    {
+        if (!IsLocalPlayer()) return;
+
+        leftThrusterAction?.action.Disable();
+        rightThrusterAction?.action.Disable();
+    }
+
     private void FixedUpdate()
     {
+        if (!IsLocalPlayer()) return;
+        if (IsNetworkActive() && !IsSpawned) return;
+
         HandleHandMovement();
         HandleThrusters();
         LimitVelocity();
@@ -106,11 +139,8 @@ public class VRChairController : MonoBehaviour
         previousLeftLocalPos = currentLeftLocalPos;
         previousRightLocalPos = currentRightLocalPos;
 
-        Vector3 leftWorldVelocity =
-            transform.TransformDirection(leftLocalVelocity);
-
-        Vector3 rightWorldVelocity =
-            transform.TransformDirection(rightLocalVelocity);
+        Vector3 leftWorldVelocity = transform.TransformDirection(leftLocalVelocity);
+        Vector3 rightWorldVelocity = transform.TransformDirection(rightLocalVelocity);
 
         ApplyHand(leftTouching, leftWorldVelocity, leftNormal);
         ApplyHand(rightTouching, rightWorldVelocity, rightNormal);
@@ -119,23 +149,17 @@ public class VRChairController : MonoBehaviour
     private void ApplyHand(bool touching, Vector3 velocity, Vector3 normal)
     {
         if (!touching) return;
-
-        if (playerTransform == null) return;
+        if (playerCameraRoot == null) return;
 
         Vector3 toPlayer =
-            (playerTransform.position - transform.position).normalized;
+            (playerCameraRoot.transform.position - transform.position).normalized;
 
         float dot = Vector3.Dot(normal, toPlayer);
+        if (dot <= 0f) return;
 
-        if (dot <= 0f)
-            return;
+        Vector3 projected = Vector3.Project(velocity, normal);
 
-        Vector3 projected =
-            Vector3.Project(velocity, normal);
-
-        Vector3 force =
-            -projected * handForceMultiplier;
-
+        Vector3 force = -projected * handForceMultiplier;
         force = Vector3.ClampMagnitude(force, maxHandForce);
 
         rb.AddForce(force, ForceMode.Acceleration);
@@ -144,18 +168,17 @@ public class VRChairController : MonoBehaviour
     private void HandleThrusters()
     {
         if (leftThrusterAction?.action.IsPressed() == true)
-            ApplyThruster(leftThruster, "LEFT");
+            ApplyThruster(leftThruster);
 
         if (rightThrusterAction?.action.IsPressed() == true)
-            ApplyThruster(rightThruster, "RIGHT");
+            ApplyThruster(rightThruster);
     }
 
-    private void ApplyThruster(Transform thruster, string name)
+    private void ApplyThruster(Transform thruster)
     {
         if (thruster == null) return;
 
         Vector3 force = thruster.forward * thrusterForce;
-
         rb.AddForceAtPosition(force, thruster.position, ForceMode.Force);
     }
 
@@ -167,24 +190,9 @@ public class VRChairController : MonoBehaviour
         }
     }
 
-    public void SetLeftTouching(bool value)
-    {
-        leftTouching = value;
-    }
+    public void SetLeftTouching(bool value) => leftTouching = value;
+    public void SetRightTouching(bool value) => rightTouching = value;
 
-    public void SetRightTouching(bool value)
-    {
-        rightTouching = value;
-    }
-
-    // NOVÉ: nastavování normály z trigger skriptu
-    public void SetLeftNormal(Vector3 normal)
-    {
-        leftNormal = normal.normalized;
-    }
-
-    public void SetRightNormal(Vector3 normal)
-    {
-        rightNormal = normal.normalized;
-    }
+    public void SetLeftNormal(Vector3 normal) => leftNormal = normal.normalized;
+    public void SetRightNormal(Vector3 normal) => rightNormal = normal.normalized;
 }

@@ -5,25 +5,24 @@ public class ChairPassCounter : MonoBehaviour
     [Header("Display skóre")]
     public Cisla scoreDisplay;
 
-    [Header("Display odpočtu")]
+    [Header("Display času")]
     public Cisla timerDisplay;
 
     [Header("Tag židle")]
     [SerializeField]
     private string chairTag = "Zidle";
 
-    [Header("Odpočet v sekundách")]
-    public float countdownSeconds = 20f;
-
     private int count = 0;
 
-    // průchod
-    private bool passedFirst = false;
+    // stav průchodu
+    private bool waitingForSecond = false;
+    private bool waitingForReturn = false;
+
     private GameObject trackedChair = null;
 
-    // timer
+    // měření času
+    private float timer = 0f;
     private bool timerRunning = false;
-    private float timerRemaining = 0f;
 
     private void Start()
     {
@@ -31,7 +30,7 @@ public class ChairPassCounter : MonoBehaviour
             scoreDisplay.Write(0);
 
         if (timerDisplay != null)
-            timerDisplay.Write(Mathf.CeilToInt(countdownSeconds * 1000f));
+            timerDisplay.Write(0);
     }
 
     private void Update()
@@ -39,26 +38,15 @@ public class ChairPassCounter : MonoBehaviour
         if (!timerRunning)
             return;
 
-        timerRemaining -= Time.deltaTime;
+        timer += Time.deltaTime;
 
-        if (timerRemaining < 0f)
-            timerRemaining = 0f;
-
-        // zobrazení v milisekundách
-        int milliseconds = Mathf.CeilToInt(timerRemaining * 1000f);
+        int milliseconds = Mathf.CeilToInt(timer * 1000f);
 
         if (timerDisplay != null)
             timerDisplay.Write(milliseconds);
-
-        if (timerRemaining <= 0f)
-        {
-            timerRunning = false;
-
-            passedFirst = false;
-            trackedChair = null;
-        }
     }
 
+    // první collider (START)
     public void HitFirst(Collider other)
     {
         GameObject rootObj = other.transform.root.gameObject;
@@ -66,14 +54,16 @@ public class ChairPassCounter : MonoBehaviour
         if (!rootObj.CompareTag(chairTag))
             return;
 
+        // start měření
         trackedChair = rootObj;
-        passedFirst = true;
+        waitingForSecond = true;
+        waitingForReturn = false;
 
-        // start odpočtu
-        timerRemaining = countdownSeconds;
+        timer = 0f;
         timerRunning = true;
     }
 
+    // druhý collider (MIDPOINT)
     public void HitSecond(Collider other)
     {
         GameObject rootObj = other.transform.root.gameObject;
@@ -81,38 +71,56 @@ public class ChairPassCounter : MonoBehaviour
         if (!rootObj.CompareTag(chairTag))
             return;
 
-        if (!passedFirst)
+        if (!waitingForSecond)
             return;
 
         if (trackedChair != rootObj)
             return;
 
-        // timer musí ještě běžet
-        if (!timerRunning)
+        waitingForSecond = false;
+        waitingForReturn = true;
+    }
+
+    // návrat zpět do prvního collideru (END)
+    public void HitReturn(Collider other)
+    {
+        GameObject rootObj = other.transform.root.gameObject;
+
+        if (!rootObj.CompareTag(chairTag))
             return;
+
+        if (!waitingForReturn)
+            return;
+
+        if (trackedChair != rootObj)
+            return;
+
+        // STOP TIMER
+        timerRunning = false;
 
         count++;
 
         if (scoreDisplay != null)
             scoreDisplay.Write(count);
 
-        // reset průchodu
-        passedFirst = false;
-        trackedChair = null;
-
-        // zastavení timeru
-        timerRunning = false;
-
         if (timerDisplay != null)
-            timerDisplay.Write(0);
+            timerDisplay.Write(Mathf.CeilToInt(timer * 1000f));
+
+        // reset
+        waitingForSecond = false;
+        waitingForReturn = false;
+        trackedChair = null;
+        timer = 0f;
     }
 
     public void ResetState()
     {
-        passedFirst = false;
+        waitingForSecond = false;
+        waitingForReturn = false;
         trackedChair = null;
 
         timerRunning = false;
+        timer = 0f;
 
         if (timerDisplay != null)
             timerDisplay.Write(0);
